@@ -1,0 +1,92 @@
+<?php require_once('../Connections/maconn.php'); ?>
+
+<?php
+/*
+ * TRUE : - Si on vient d'arriver sur la page pour la première fois - Si il y a une erreur FALSE : - Si on s'est connecté
+ */
+
+if (! empty ( $_POST ['username'] ) and ! empty ( $_POST ['password'] )) {
+	$req = $bdd->prepare ( 'SELECT COUNT(*) FROM user WHERE password = :password AND username = :username' );
+	$password = md5 ( $_POST ['password'] );
+	$req->bindValue ( ':username', $_POST ['username'], PDO::PARAM_STR );
+	$req->bindValue ( ':password', $password, PDO::PARAM_STR );
+	$req->execute ();
+	$resultat = $req->fetch ();
+	$req->closeCursor ();
+	if ($resultat [0] == 0) {
+		echo 'Identifiant ou Motdepasse invalide';
+	} else {
+		$_SESSION ['username'] = $_POST ['username'];
+		header ( "location:default.php" );
+	}
+}
+
+?>
+<!doctype html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8" />
+<title>admin</title>
+<link rel="stylesheet" href="css/layout.css" type="text/css"
+	media="screen" />
+<!--[if lt IE 9]>
+	<!--link rel="stylesheet" href="css/ie.css" type="text/css" media="screen" />
+	<!--[if IE]><script src="scripts/html5-ie.js"></script><![endif]-->
+<script src="js/jquery-1.5.2.min.js"></script>
+<!-- prettyPhoto -->
+<script src="js/prettyPhoto/js/jquery.prettyPhoto.js"></script>
+<link rel="stylesheet" href="js/prettyPhoto/css/prettyPhoto.css"
+	media="screen" />
+<!-- ENDS prettyPhoto -->
+
+
+</head>
+<body>
+
+
+	<section id="secondary_bar" style="position: fixed; margin-top: 0px">
+		<div class="user">
+			<p>Non connectÃ©</p>
+			<!-- <a class="logout_user" href="#" title="Logout">Logout</a> -->
+		</div>
+
+		<div class="breadcrumbs_container"></div>
+	</section>
+	<!-- end of secondary bar -->
+
+
+	<footer>
+		<hr />
+		<p>
+			<strong>ProjetTER M1-UPEC 2015 </strong>
+		</p>
+	</footer>
+	</aside>
+	<!-- end of sidebar -->
+
+	<section id="main" class="column"
+		style="margin-left: 290px; margin-top: 89px">
+		<article class="module width_half">
+			<header>
+				<h3 class="tabs_involved">Authentification</h3>
+			</header>
+			<div class="module_content">
+				<div style="margin: 30px">
+				<form action="" method="post">
+					<td><label>Username </label><input type="text" name="username"
+						class="box" /><br /></td>
+					<td><br /> <label>Password </label><input type="password"
+						name="password" class="box" /><br /></td>
+					<br /> <input type="submit" name='submit' value="Se connecter"
+						class='submit' /><br />
+				</form>
+			</div>
+			</div>
+		</article>
+
+		<div class="clear"></div>
+		<div class="spacer"></div>
+	</section>
+</body>
+</html>
